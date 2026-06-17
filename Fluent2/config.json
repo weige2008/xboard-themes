@@ -10,40 +10,18 @@
       "field_name": "theme_color",
       "field_type": "select",
       "select_options": {
-        "default": "Fluent 蓝(推荐)",
-        "darkblue": "深蓝",
-        "black": "石墨黑",
-        "green": "翡翠绿"
+        "blue": "Fluent 蓝(推荐)",
+        "default": "默认",
+        "darkblue": "深蓝(暗侧栏)",
+        "black": "石墨黑(暗侧栏)"
       },
-      "default_value": "default"
+      "default_value": "blue"
     },
     {
       "label": "背景",
       "placeholder": "请输入背景图片URL（留空使用 Mica 渐变背景）",
       "field_name": "background_url",
       "field_type": "input"
-    },
-    {
-      "label": "侧栏风格",
-      "placeholder": "请选择边栏风格",
-      "field_name": "theme_sidebar",
-      "field_type": "select",
-      "select_options": {
-        "light": "亮(亚克力)",
-        "dark": "暗(云母黑)"
-      },
-      "default_value": "light"
-    },
-    {
-      "label": "顶部风格",
-      "placeholder": "请选择顶部风格",
-      "field_name": "theme_header",
-      "field_type": "select",
-      "select_options": {
-        "light": "亮(亚克力)",
-        "dark": "暗"
-      },
-      "default_value": "light"
     },
     {
       "label": "自定义页脚HTML",

@@ -1,437 +1,291 @@
 /* =============================================================
-   Xboard-airplane  •  Fluent2 主题
-   设计语言: Windows 11 / Fluent 2  (Mica + Acrylic + Fluent Blue)
+   Xboard (cedar2025)  •  Fluent2 主题
+   设计语言: Windows 11 / Fluent 2  (Mica 背景 + 亚克力 + Fluent 蓝)
    作者: weige2008
    -----------------------------------------------------------
-   作用: 在 v2board(Ant Design 3) 基础包之上做 Fluent 2 视觉重绘。
-   本文件由 dashboard.blade.php 在 umi.css 之后加载，覆盖优先级最高。
+   作用: 在 Xboard 默认 Naive UI(Vue3) 前端包之上做 Fluent 2 视觉重绘。
+   dashboard.blade.php 在 umi.js 之后加载本文件。
+   因 Naive UI 在运行时以内联 --n-* 变量注入样式，本文件用直接属性 +
+   必要的 !important 覆盖，确保视觉生效。
    ============================================================= */
 
 /* ---------- 1. Design Tokens ---------- */
 .xb-theme-fluent2 {
-  /* Fluent 蓝色阶 */
-  --fluent-primary: #0078D4;
-  --fluent-primary-hover: #106EBE;
-  --fluent-primary-active: #005A9E;
-  --fluent-primary-soft: rgba(0, 120, 212, 0.12);
-  --fluent-accent-2: #60CDFF;
-  --fluent-success: #107C10;
-  --fluent-warning: #F7630C;
-  --fluent-danger: #C50F1F;
-
-  /* 文字 */
-  --fluent-text: rgba(0, 0, 0, 0.90);
-  --fluent-text-2: rgba(0, 0, 0, 0.60);
-  --fluent-text-3: rgba(0, 0, 0, 0.45);
-
-  /* Mica 背景（柔和、去饱和的渐变，模拟系统材质） */
-  --fluent-bg-1: #ECECEC;
-  --fluent-bg-2: #F4F6FA;
-  --fluent-bg-3: #EAEEF3;
-
-  /* Acrylic 材质 */
-  --fluent-acrylic-bg: rgba(252, 252, 252, 0.70);
-  --fluent-acrylic-blur: saturate(140%) blur(40px);
-
-  /* 描边与高光 */
-  --fluent-stroke: rgba(0, 0, 0, 0.06);
-  --fluent-stroke-strong: rgba(0, 0, 0, 0.10);
-  --fluent-highlight: rgba(255, 255, 255, 0.70);
-
-  /* Fluent 标准阴影（card depth / dialog / flyout）*/
-  --fluent-shadow-2: 0 1px 2px rgba(0,0,0,.10), 0 0 1px rgba(0,0,0,.06);
-  --fluent-shadow-4: 0 2px 4px rgba(0,0,0,.08), 0 0 2px rgba(0,0,0,.06);
-  --fluent-shadow-8: 0 4px 8px rgba(0,0,0,.10), 0 0 2px rgba(0,0,0,.06);
-  --fluent-shadow-16: 0 8px 16px rgba(0,0,0,.12), 0 0 2px rgba(0,0,0,.08);
-  --fluent-shadow-28: 0 12px 28px rgba(0,0,0,.16), 0 0 4px rgba(0,0,0,.08);
-  --fluent-shadow-64: 0 24px 48px rgba(0,0,0,.20), 0 0 8px rgba(0,0,0,.08);
-
-  /* 圆角 */
-  --fluent-radius-sm: 4px;
-  --fluent-radius: 6px;
-  --fluent-radius-lg: 8px;
-  --fluent-radius-xl: 12px;
-
-  /* 缓动（Fluent 经典曲线）*/
-  --fluent-ease: cubic-bezier(0.1, 0.9, 0.2, 1);
-  --fluent-ease-decel: cubic-bezier(0.1, 0.9, 0.2, 1);
+  --fl-primary: #0078D4;
+  --fl-primary-hover: #106EBE;
+  --fl-primary-active: #005A9E;
+  --fl-primary-soft: rgba(0,120,212,.12);
+  --fl-accent-2: #60CDFF;
+  --fl-success: #107C10;
+  --fl-warning: #F7630C;
+  --fl-danger: #C50F1F;
+  --fl-text: rgba(0,0,0,.90);
+  --fl-text-2: rgba(0,0,0,.60);
+  --fl-text-3: rgba(0,0,0,.45);
+  --fl-bg-1: #ECECEC; --fl-bg-2: #F4F6FA; --fl-bg-3: #EAEEF3;
+  --fl-acrylic-bg: rgba(252,252,252,.72);
+  --fl-acrylic-blur: saturate(140%) blur(40px);
+  --fl-stroke: rgba(0,0,0,.06);
+  --fl-stroke-strong: rgba(0,0,0,.10);
+  --fl-highlight: rgba(255,255,255,.70);
+  --fl-shadow-2: 0 1px 2px rgba(0,0,0,.10), 0 0 1px rgba(0,0,0,.06);
+  --fl-shadow-4: 0 2px 4px rgba(0,0,0,.08), 0 0 2px rgba(0,0,0,.06);
+  --fl-shadow-8: 0 4px 8px rgba(0,0,0,.10), 0 0 2px rgba(0,0,0,.06);
+  --fl-shadow-16: 0 8px 16px rgba(0,0,0,.12), 0 0 2px rgba(0,0,0,.08);
+  --fl-shadow-64: 0 24px 48px rgba(0,0,0,.20), 0 0 8px rgba(0,0,0,.08);
+  --fl-radius-sm: 4px; --fl-radius: 6px; --fl-radius-lg: 8px; --fl-radius-xl: 12px;
+  --fl-ease: cubic-bezier(0.1,0.9,0.2,1);
 }
 
 /* ---------- 2. 全局 / 字体 / Mica 背景 ---------- */
-.xb-theme-fluent2,
-.xb-theme-fluent2 .ant-btn,
-.xb-theme-fluent2 .ant-input,
-.xb-theme-fluent2 .ant-select,
-.xb-theme-fluent2 .ant-modal-title {
-  font-family: "Segoe UI Variable", "Segoe UI", "Microsoft YaHei UI",
-    -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue",
-    Arial, sans-serif;
-}
-
-.xb-theme-fluent2 body,
 .xb-theme-fluent2 {
-  color: var(--fluent-text);
-  background: var(--fluent-bg-1);
+  font-family: "Segoe UI Variable","Segoe UI","Microsoft YaHei UI",-apple-system,
+    BlinkMacSystemFont,"PingFang SC","Helvetica Neue",Arial,sans-serif !important;
+  color: var(--fl-text);
+  background: var(--fl-bg-1);
 }
-
-/* Mica 背景层（由 custom.js 注入 #fluent-mica），否则用纯 CSS 渐变兜底 */
-.xb-theme-fluent2 body {
-  background:
-    radial-gradient(1200px 800px at 8% -10%, rgba(96, 205, 255, 0.10), transparent 60%),
-    radial-gradient(1100px 700px at 110% 0%, rgba(0, 120, 212, 0.10), transparent 55%),
-    radial-gradient(900px 700px at 50% 120%, rgba(135, 100, 220, 0.08), transparent 60%),
-    linear-gradient(160deg, var(--fluent-bg-2) 0%, var(--fluent-bg-1) 45%, var(--fluent-bg-3) 100%);
-  background-attachment: fixed;
+.xb-theme-fluent2 body,
+.xb-theme-fluent2 #app {
   min-height: 100vh;
-}
-
-#fluent-mica {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
+  color: var(--fl-text);
   background:
-    radial-gradient(900px 600px at var(--mx, 12%) var(--my, 8%), rgba(96, 205, 255, 0.14), transparent 60%),
-    radial-gradient(820px 560px at 92% 4%, rgba(0, 120, 212, 0.16), transparent 58%),
-    radial-gradient(760px 620px at 70% 112%, rgba(150, 110, 230, 0.12), transparent 60%),
-    linear-gradient(160deg, #F5F7FB, #ECECEC 50%, #E7ECF2);
+    radial-gradient(1200px 800px at 8% -10%, rgba(96,205,255,.10), transparent 60%),
+    radial-gradient(1100px 700px at 110% 0%, rgba(0,120,212,.10), transparent 55%),
+    radial-gradient(900px 700px at 50% 120%, rgba(135,100,220,.08), transparent 60%),
+    linear-gradient(160deg, var(--fl-bg-2) 0%, var(--fl-bg-1) 45%, var(--fl-bg-3) 100%);
+  background-attachment: fixed;
+}
+#fluent-mica {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(900px 600px at var(--mx,12%) var(--my,8%), rgba(96,205,255,.14), transparent 60%),
+    radial-gradient(820px 560px at 92% 4%, rgba(0,120,212,.16), transparent 58%),
+    radial-gradient(760px 620px at 70% 112%, rgba(150,110,230,.12), transparent 60%),
+    linear-gradient(160deg,#F5F7FB,#ECECEC 50%,#E7ECF2);
   filter: saturate(108%);
-  transition: background 1.2s var(--fluent-ease);
+  transition: background 1.2s var(--fl-ease);
 }
 
-/* ---------- 3. 布局：侧栏(Acrylic) + 顶栏 ---------- */
-.xb-theme-fluent2 .ant-layout-sider {
-  background: var(--fluent-acrylic-bg) !important;
-  -webkit-backdrop-filter: var(--fluent-acrylic-blur);
-  backdrop-filter: var(--fluent-acrylic-blur);
-  border-right: 1px solid var(--fluent-stroke);
-  box-shadow: inset -1px 0 0 var(--fluent-highlight);
+/* ---------- 3. 布局：侧栏 / 顶栏（亚克力） ---------- */
+.xb-theme-fluent2 .n-layout {
+  background: transparent !important;
+  --n-color: transparent !important;
 }
-
-.xb-theme-fluent2 .ant-layout-header {
-  background: var(--fluent-acrylic-bg) !important;
-  -webkit-backdrop-filter: var(--fluent-acrylic-blur);
-  backdrop-filter: var(--fluent-acrylic-blur);
-  border-bottom: 1px solid var(--fluent-stroke);
-  box-shadow: inset 0 -1px 0 var(--fluent-highlight);
+.xb-theme-fluent2 .n-layout-sider,
+.xb-theme-fluent2 .n-layout-header {
+  background: var(--fl-acrylic-bg) !important;
+  -webkit-backdrop-filter: var(--fl-acrylic-blur);
+  backdrop-filter: var(--fl-acrylic-blur);
+  border-color: var(--fl-stroke) !important;
 }
-
-.xb-theme-fluent2 .ant-layout-content {
-  background: transparent;
-}
+.xb-theme-fluent2 .n-layout-sider { border-right: 1px solid var(--fl-stroke); box-shadow: inset -1px 0 0 var(--fl-highlight); }
+.xb-theme-fluent2 .n-layout-header { border-bottom: 1px solid var(--fl-stroke); box-shadow: inset 0 -1px 0 var(--fl-highlight); }
+.xb-theme-fluent2 .n-layout-scroll-container { background: transparent !important; }
 
 /* ---------- 4. 侧栏菜单（Fluent Nav） ---------- */
-.xb-theme-fluent2 .ant-menu,
-.xb-theme-fluent2 .ant-menu-sub,
-.xb-theme-fluent2 .ant-menu-inline {
-  background: transparent !important;
-}
-
-.xb-theme-fluent2 .ant-menu-item,
-.xb-theme-fluent2 .ant-menu-submenu-title {
-  border-radius: var(--fluent-radius);
+.xb-theme-fluent2 .n-menu { background: transparent !important; --n-color: transparent !important; }
+.xb-theme-fluent2 .n-menu-item-content {
+  border-radius: var(--fl-radius) !important;
   margin: 2px 8px !important;
-  width: calc(100% - 16px) !important;
-  color: var(--fluent-text) !important;
-  transition: background 160ms var(--fluent-ease), color 160ms var(--fluent-ease);
+  color: var(--fl-text) !important;
+  background: transparent !important;
+  transition: background 160ms var(--fl-ease), color 160ms var(--fl-ease) !important;
 }
-
-.xb-theme-fluent2 .ant-menu-item:hover,
-.xb-theme-fluent2 .ant-menu-submenu-title:hover {
-  background: var(--fluent-primary-soft) !important;
-  color: var(--fluent-primary) !important;
+.xb-theme-fluent2 .n-menu-item-content:hover {
+  background: var(--fl-primary-soft) !important;
+  color: var(--fl-primary) !important;
 }
-
-.xb-theme-fluent2 .ant-menu-item-selected,
-.xb-theme-fluent2 .ant-menu-submenu-selected > .ant-menu-submenu-title {
-  background: var(--fluent-primary-soft) !important;
-  color: var(--fluent-primary) !important;
+.xb-theme-fluent2 .n-menu-item-content--selected,
+.xb-theme-fluent2 .n-menu-item-content--child-active {
+  background: var(--fl-primary-soft) !important;
+  color: var(--fl-primary) !important;
   font-weight: 600;
-  box-shadow: inset 2px 0 0 var(--fluent-primary);
+  box-shadow: inset 2px 0 0 var(--fl-primary);
 }
+.xb-theme-fluent2 .n-menu-item-content--selected::before { display: none !important; }
 
-/* 选中项左侧的 Fluent 强调条（覆盖 antd 默认蓝条）*/
-.xb-theme-fluent2 .ant-menu-inline .ant-menu-item::after { display: none; }
-
-/* ---------- 5. 卡片（Acrylic + reveal hover） ---------- */
-.xb-theme-fluent2 .ant-card {
-  background: var(--fluent-acrylic-bg);
-  -webkit-backdrop-filter: var(--fluent-acrylic-blur);
-  backdrop-filter: var(--fluent-acrylic-blur);
-  border: 1px solid var(--fluent-stroke);
-  border-radius: var(--fluent-radius-lg);
-  box-shadow: var(--fluent-shadow-4), inset 0 1px 0 var(--fluent-highlight);
-  transition: transform 200ms var(--fluent-ease), box-shadow 200ms var(--fluent-ease),
-    border-color 200ms var(--fluent-ease);
-  color: var(--fluent-text);
+/* ---------- 5. 卡片（亚克力 + reveal hover） ---------- */
+.xb-theme-fluent2 .n-card {
+  background: var(--fl-acrylic-bg) !important;
+  color: var(--fl-text) !important;
+  -webkit-backdrop-filter: var(--fl-acrylic-blur);
+  backdrop-filter: var(--fl-acrylic-blur);
+  border: 1px solid var(--fl-stroke) !important;
+  border-radius: var(--fl-radius-lg) !important;
+  box-shadow: var(--fl-shadow-4), inset 0 1px 0 var(--fl-highlight) !important;
+  transition: transform 200ms var(--fl-ease), box-shadow 200ms var(--fl-ease), border-color 200ms var(--fl-ease) !important;
+  overflow: hidden;
 }
-
-.xb-theme-fluent2 .ant-card:hover {
+.xb-theme-fluent2 .n-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--fluent-shadow-16), inset 0 1px 0 var(--fluent-highlight);
-  border-color: var(--fluent-stroke-strong);
+  box-shadow: var(--fl-shadow-16), inset 0 1px 0 var(--fl-highlight) !important;
+  border-color: var(--fl-stroke-strong) !important;
 }
-
-.xb-theme-fluent2 .ant-card-head {
-  border-bottom: 1px solid var(--fluent-stroke);
-  color: var(--fluent-text);
-  font-weight: 600;
-  min-height: 48px;
-  padding: 0 20px;
-}
-
-.xb-theme-fluent2 .ant-card-head-title { font-weight: 600; }
-.xb-theme-fluent2 .ant-card-body { color: var(--fluent-text); }
+.xb-theme-fluent2 .n-card-header,
+.xb-theme-fluent2 .n-card-header__main { color: var(--fl-text) !important; font-weight: 600; }
+.xb-theme-fluent2 .n-card > .n-card__content { color: var(--fl-text) !important; }
 
 /* ---------- 6. 按钮（Fluent Button） ---------- */
-.xb-theme-fluent2 .ant-btn {
-  height: 36px;
-  padding: 0 16px;
-  border-radius: var(--fluent-radius);
-  font-weight: 600;
-  color: var(--fluent-text);
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid var(--fluent-stroke-strong);
-  box-shadow: var(--fluent-shadow-2), inset 0 1px 0 var(--fluent-highlight);
-  transition: background 150ms var(--fluent-ease), border-color 150ms var(--fluent-ease),
-    box-shadow 150ms var(--fluent-ease), transform 120ms var(--fluent-ease);
+.xb-theme-fluent2 .n-button {
+  height: 36px !important;
+  border-radius: var(--fl-radius) !important;
+  font-weight: 600 !important;
+  color: var(--fl-text) !important;
+  background: rgba(255,255,255,.60) !important;
+  border: 1px solid var(--fl-stroke-strong) !important;
+  box-shadow: var(--fl-shadow-2), inset 0 1px 0 var(--fl-highlight) !important;
+  transition: background 150ms var(--fl-ease), border-color 150ms var(--fl-ease), box-shadow 150ms var(--fl-ease), transform 120ms var(--fl-ease) !important;
 }
-
-.xb-theme-fluent2 .ant-btn:hover {
-  background: rgba(255, 255, 255, 0.80);
-  border-color: rgba(0, 0, 0, 0.20);
-  box-shadow: var(--fluent-shadow-4), inset 0 1px 0 var(--fluent-highlight);
+.xb-theme-fluent2 .n-button:hover {
+  background: rgba(255,255,255,.85) !important;
+  border-color: rgba(0,0,0,.20) !important;
+  box-shadow: var(--fl-shadow-4), inset 0 1px 0 var(--fl-highlight) !important;
 }
-
-.xb-theme-fluent2 .ant-btn:active { transform: translateY(1px); box-shadow: var(--fluent-shadow-2); }
-
+.xb-theme-fluent2 .n-button:active { transform: translateY(1px); }
 /* 主按钮：Fluent 蓝 */
-.xb-theme-fluent2 .ant-btn-primary {
-  background: var(--fluent-primary);
-  border-color: var(--fluent-primary);
-  color: #fff;
-  box-shadow: var(--fluent-shadow-2);
+.xb-theme-fluent2 .n-button.n-button--primary-type,
+.xb-theme-fluent2 .n-button.n-button--info-type {
+  background: var(--fl-primary) !important;
+  border-color: var(--fl-primary) !important;
+  color: #fff !important;
+  box-shadow: var(--fl-shadow-2) !important;
 }
-.xb-theme-fluent2 .ant-btn-primary:hover {
-  background: var(--fluent-primary-hover);
-  border-color: var(--fluent-primary-hover);
-  color: #fff;
-  box-shadow: var(--fluent-shadow-8);
+.xb-theme-fluent2 .n-button.n-button--primary-type:hover,
+.xb-theme-fluent2 .n-button.n-button--info-type:hover {
+  background: var(--fl-primary-hover) !important;
+  border-color: var(--fl-primary-hover) !important;
+  box-shadow: var(--fl-shadow-8) !important;
 }
-.xb-theme-fluent2 .ant-btn-primary:active { background: var(--fluent-primary-active); border-color: var(--fluent-primary-active); }
-
-.xb-theme-fluent2 .ant-btn[disabled],
-.xb-theme-fluent2 .ant-btn[disabled]:hover {
-  background: rgba(0,0,0,0.04);
-  color: var(--fluent-text-3);
-  border-color: var(--fluent-stroke);
-  box-shadow: none;
+.xb-theme-fluent2 .n-button.n-button--primary-type:active {
+  background: var(--fl-primary-active) !important; border-color: var(--fl-primary-active) !important;
 }
-
-/* 链接按钮 */
-.xb-theme-fluent2 .ant-btn-link,
-.xb-theme-fluent2 .ant-btn-link:hover {
-  color: var(--fluent-primary);
-  box-shadow: none;
-  background: transparent;
-  border-color: transparent;
-}
+/* success/warning/error 对齐 Fluent 状态色 */
+.xb-theme-fluent2 .n-button.n-button--success-type { background: var(--fl-success) !important; border-color: var(--fl-success) !important; color:#fff !important; }
+.xb-theme-fluent2 .n-button.n-button--warning-type { background: var(--fl-warning) !important; border-color: var(--fl-warning) !important; color:#fff !important; }
+.xb-theme-fluent2 .n-button.n-button--error-type   { background: var(--fl-danger) !important;  border-color: var(--fl-danger)  !important; color:#fff !important; }
 
 /* ---------- 7. 输入框 / 选择器 / 开关 ---------- */
-.xb-theme-fluent2 .ant-input,
-.xb-theme-fluent2 textarea.ant-input,
-.xb-theme-fluent2 .ant-input-affix-wrapper,
-.xb-theme-fluent2 .ant-select-selection,
-.xb-theme-fluent2 .ant-input-number-input {
-  background: rgba(255, 255, 255, 0.70);
-  border: 1px solid var(--fluent-stroke-strong);
-  border-radius: var(--fluent-radius);
-  color: var(--fluent-text);
-  height: 36px;
-  transition: border-color 150ms var(--fluent-ease), box-shadow 150ms var(--fluent-ease),
-    background 150ms var(--fluent-ease);
+.xb-theme-fluent2 .n-input,
+.xb-theme-fluent2 .n-input-wrapper,
+.xb-theme-fluent2 .n-base-selection {
+  background: rgba(255,255,255,.72) !important;
+  border-radius: var(--fl-radius) !important;
+  --n-border: 1px solid var(--fl-stroke-strong) !important;
+  border: 1px solid var(--fl-stroke-strong) !important;
+  transition: border-color 150ms var(--fl-ease), box-shadow 150ms var(--fl-ease), background 150ms var(--fl-ease) !important;
 }
-
-.xb-theme-fluent2 .ant-input:hover,
-.xb-theme-fluent2 .ant-select-selection:hover {
-  border-color: var(--fluent-primary);
-  background: rgba(255, 255, 255, 0.92);
+.xb-theme-fluent2 .n-input:hover,
+.xb-theme-fluent2 .n-base-selection:hover { border-color: var(--fl-primary) !important; }
+.xb-theme-fluent2 .n-input--focus,
+.xb-theme-fluent2 .n-base-selection--focus,
+.xb-theme-fluent2 .n-base-selection:focus-within {
+  border-color: var(--fl-primary) !important;
+  box-shadow: 0 0 0 1px var(--fl-primary) !important;
+  background: #fff !important;
 }
+.xb-theme-fluent2 .n-input__input-el,
+.xb-theme-fluent2 .n-input__textarea-el { color: var(--fl-text) !important; }
 
-.xb-theme-fluent2 .ant-input:focus,
-.xb-theme-fluent2 .ant-input-focused,
-.xb-theme-fluent2 .ant-select-focused .ant-select-selection,
-.xb-theme-fluent2 .ant-input-affix-wrapper-focused {
-  border-color: var(--fluent-primary);
-  background: #fff;
-  box-shadow: 0 0 0 1px var(--fluent-primary);
-  outline: none;
-}
-
-/* 开关：Fluent Toggle */
-.xb-theme-fluent2 .ant-switch-checked { background-color: var(--fluent-primary) !important; }
-
-/* 单选 / 复选 */
-.xb-theme-fluent2 .ant-radio-checked .ant-radio-inner,
-.xb-theme-fluent2 .ant-checkbox-checked .ant-checkbox-inner {
-  border-color: var(--fluent-primary);
-  background-color: var(--fluent-primary);
-}
-.xb-theme-fluent2 .ant-radio-inner::after { background-color: #fff; }
+.xb-theme-fluent2 .n-switch.n-switch--active { background: var(--fl-primary) !important; }
+.xb-theme-fluent2 .n-checkbox-box--checked,
+.xb-theme-fluent2 .n-checkbox-box.n-checkbox-box--checked { background: var(--fl-primary) !important; border-color: var(--fl-primary) !important; }
+.xb-theme-fluent2 .n-radio__dot { border-color: var(--fl-primary) !important; }
+.xb-theme-fluent2 .n-radio--checked .n-radio__dot { background: var(--fl-primary) !important; }
 
 /* ---------- 8. 表格 ---------- */
-.xb-theme-fluent2 .ant-table {
-  background: transparent;
-  color: var(--fluent-text);
-  border-radius: var(--fluent-radius-lg);
+.xb-theme-fluent2 .n-data-table {
+  background: transparent !important;
+  --n-merged-th-color: rgba(0,0,0,.02) !important;
+  border-radius: var(--fl-radius-lg) !important;
 }
-.xb-theme-fluent2 .ant-table-thead > tr > th {
-  background: rgba(0, 0, 0, 0.02);
-  color: var(--fluent-text-2);
-  font-weight: 600;
-  border-bottom: 1px solid var(--fluent-stroke-strong);
-}
-.xb-theme-fluent2 .ant-table-tbody > tr > td {
-  background: rgba(255, 255, 255, 0.45);
-  border-bottom: 1px solid var(--fluent-stroke);
-  transition: background 150ms var(--fluent-ease);
-}
-.xb-theme-fluent2 .ant-table-tbody > tr:hover > td {
-  background: var(--fluent-primary-soft);
-}
+.xb-theme-fluent2 .n-data-table-thead { background: rgba(0,0,0,.02) !important; }
+.xb-theme-fluent2 .n-data-table-th { background: transparent !important; color: var(--fl-text-2) !important; font-weight: 600 !important; border-bottom: 1px solid var(--fl-stroke-strong) !important; }
+.xb-theme-fluent2 .n-data-table-td { color: var(--fl-text) !important; border-bottom: 1px solid var(--fl-stroke) !important; background: rgba(255,255,255,.45) !important; }
+.xb-theme-fluent2 .n-data-table-tr:hover .n-data-table-td { background: var(--fl-primary-soft) !important; }
 
-/* ---------- 9. 模态框（Acrylic 对话框） ---------- */
-.xb-theme-fluent2 .ant-modal-content {
-  background: var(--fluent-acrylic-bg);
-  -webkit-backdrop-filter: var(--fluent-acrylic-blur);
-  backdrop-filter: var(--fluent-acrylic-blur);
-  border: 1px solid var(--fluent-stroke);
-  border-radius: var(--fluent-radius-xl);
-  box-shadow: var(--fluent-shadow-64), inset 0 1px 0 var(--fluent-highlight);
-  color: var(--fluent-text);
+/* ---------- 9. 模态框 / 对话框（亚克力） ---------- */
+.xb-theme-fluent2 .n-modal .n-card,
+.xb-theme-fluent2 .n-modal-container .n-card {
+  background: var(--fl-acrylic-bg) !important;
+  -webkit-backdrop-filter: var(--fl-acrylic-blur);
+  backdrop-filter: var(--fl-acrylic-blur);
+  border: 1px solid var(--fl-stroke) !important;
+  border-radius: var(--fl-radius-xl) !important;
+  box-shadow: var(--fl-shadow-64), inset 0 1px 0 var(--fl-highlight) !important;
 }
-.xb-theme-fluent2 .ant-modal-header { background: transparent; border-bottom: 1px solid var(--fluent-stroke); }
-.xb-theme-fluent2 .ant-modal-title { color: var(--fluent-text); font-weight: 600; }
-.xb-theme-fluent2 .ant-modal-close { color: var(--fluent-text-2); }
-.xb-theme-fluent2 .ant-modal-footer { border-top: 1px solid var(--fluent-stroke); }
+.xb-theme-fluent2 .n-modal-mask { background: rgba(0,0,0,.30) !important; -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
+.xb-theme-fluent2 .n-dialog { background: var(--fl-acrylic-bg) !important; -webkit-backdrop-filter: var(--fl-acrylic-blur); backdrop-filter: var(--fl-acrylic-blur); border-radius: var(--fl-radius-xl) !important; box-shadow: var(--fl-shadow-64) !important; }
 
-/* ---------- 10. 标签页 / 折叠面板 ---------- */
-.xb-theme-fluent2 .ant-tabs-tab { color: var(--fluent-text-2); font-weight: 600; }
-.xb-theme-fluent2 .ant-tabs-tab-active,
-.xb-theme-fluent2 .ant-tabs-tab-active .ant-tabs-tab { color: var(--fluent-primary) !important; }
-.xb-theme-fluent2 .ant-tabs-ink-bar { background: var(--fluent-primary); height: 3px !important; border-radius: 2px; }
-.xb-theme-fluent2 .ant-tabs-bar { border-bottom: 1px solid var(--fluent-stroke); margin-bottom: 16px; }
-
-.xb-theme-fluent2 .ant-collapse {
-  background: rgba(255, 255, 255, 0.50);
-  border: 1px solid var(--fluent-stroke);
-  border-radius: var(--fluent-radius-lg);
-}
-.xb-theme-fluent2 .ant-collapse-header { color: var(--fluent-text) !important; }
-.xb-theme-fluent2 .ant-collapse > .ant-collapse-item { border-bottom: 1px solid var(--fluent-stroke); }
+/* ---------- 10. 标签页 / 折叠 ---------- */
+.xb-theme-fluent2 .n-tabs-tab { color: var(--fl-text-2) !important; font-weight: 600 !important; }
+.xb-theme-fluent2 .n-tabs-tab--active { color: var(--fl-primary) !important; }
+.xb-theme-fluent2 .n-tabs-bar { background: var(--fl-primary) !important; height: 3px !important; border-radius: 2px !important; }
 
 /* ---------- 11. 标签 / 徽标 / 进度 ---------- */
-.xb-theme-fluent2 .ant-tag {
-  border-radius: var(--fluent-radius-sm);
-  background: var(--fluent-primary-soft);
-  border: 1px solid transparent;
-  color: var(--fluent-primary);
-  font-weight: 600;
+.xb-theme-fluent2 .n-tag {
+  border-radius: var(--fl-radius-sm) !important;
+  background: var(--fl-primary-soft) !important;
+  color: var(--fl-primary) !important;
+  font-weight: 600 !important;
+  border: 1px solid transparent !important;
 }
-.xb-theme-fluent2 .ant-tag-green { background: rgba(16,124,16,.10); color: var(--fluent-success); }
-.xb-theme-fluent2 .ant-tag-red, .xb-theme-fluent2 .ant-tag-volcano { background: rgba(197,15,31,.10); color: var(--fluent-danger); }
-.xb-theme-fluent2 .ant-tag-orange, .xb-theme-fluent2 .ant-tag-gold { background: rgba(247,99,12,.10); color: var(--fluent-warning); }
-
-.xb-theme-fluent2 .ant-badge-count { background: var(--fluent-danger); border-radius: 999px; }
-
-.xb-theme-fluent2 .ant-progress-bg { background: var(--fluent-primary); }
-.xb-theme-fluent2 .ant-progress-success-bg { background: var(--fluent-success); }
+.xb-theme-fluent2 .n-tag.n-tag--success-type { background: rgba(16,124,16,.10) !important; color: var(--fl-success) !important; }
+.xb-theme-fluent2 .n-tag.n-tag--error-type   { background: rgba(197,15,31,.10) !important; color: var(--fl-danger) !important; }
+.xb-theme-fluent2 .n-tag.n-tag--warning-type { background: rgba(247,99,12,.10) !important; color: var(--fl-warning) !important; }
+.xb-theme-fluent2 .n-progress .n-progress-graph-line-fill { background: var(--fl-primary) !important; }
+.xb-theme-fluent2 .n-badge .n-badge-sup { background: var(--fl-danger) !important; }
 
 /* ---------- 12. 分页 / 下拉 / 提示 ---------- */
-.xb-theme-fluent2 .ant-pagination-item,
-.xb-theme-fluent2 .ant-pagination-prev .ant-pagination-item-link,
-.xb-theme-fluent2 .ant-pagination-next .ant-pagination-item-link {
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid var(--fluent-stroke-strong);
-  border-radius: var(--fluent-radius);
+.xb-theme-fluent2 .n-pagination-item,
+.xb-theme-fluent2 .n-pagination .n-button {
+  background: rgba(255,255,255,.55) !important;
+  border: 1px solid var(--fl-stroke-strong) !important;
+  border-radius: var(--fl-radius) !important;
 }
-.xb-theme-fluent2 .ant-pagination-item-active { border-color: var(--fluent-primary); }
-.xb-theme-fluent2 .ant-pagination-item-active a { color: var(--fluent-primary); }
+.xb-theme-fluent2 .n-pagination-item--active { border-color: var(--fl-primary) !important; color: var(--fl-primary) !important; background: var(--fl-primary-soft) !important; }
 
-.xb-theme-fluent2 .ant-dropdown-menu,
-.xb-theme-fluent2 .ant-select-dropdown-menu {
-  background: var(--fluent-acrylic-bg);
-  -webkit-backdrop-filter: var(--fluent-acrylic-blur);
-  backdrop-filter: var(--fluent-acrylic-blur);
-  border: 1px solid var(--fluent-stroke);
-  border-radius: var(--fluent-radius-lg);
-  box-shadow: var(--fluent-shadow-16);
+.xb-theme-fluent2 .n-base-select-menu,
+.xb-theme-fluent2 .n-dropdown-menu,
+.xb-theme-fluent2 .n-popover,
+.xb-theme-fluent2 .n-popselect-menu {
+  background: var(--fl-acrylic-bg) !important;
+  -webkit-backdrop-filter: var(--fl-acrylic-blur);
+  backdrop-filter: var(--fl-acrylic-blur);
+  border: 1px solid var(--fl-stroke) !important;
+  border-radius: var(--fl-radius-lg) !important;
+  box-shadow: var(--fl-shadow-16) !important;
 }
-.xb-theme-fluent2 .ant-dropdown-menu-item:hover,
-.xb-theme-fluent2 .ant-select-dropdown-menu-item:hover,
-.xb-theme-fluent2 .ant-select-dropdown-menu-item-selected,
-.xb-theme-fluent2 .ant-select-dropdown-menu-item-active {
-  background: var(--fluent-primary-soft) !important;
-}
-
-.xb-theme-fluent2 .ant-alert { border-radius: var(--fluent-radius-lg); border: 1px solid var(--fluent-stroke); }
-.xb-theme-fluent2 .ant-alert-info { background: var(--fluent-primary-soft); border-color: transparent; }
-
-/* 消息提示 / 通知（浮层 acrylic） */
-.xb-theme-fluent2 .ant-notification-notice,
-.xb-theme-fluent2 .ant-tooltip-inner,
-.xb-theme-fluent2 .ant-popover-inner {
-  background: var(--fluent-acrylic-bg);
-  -webkit-backdrop-filter: var(--fluent-acrylic-blur);
-  backdrop-filter: var(--fluent-acrylic-blur);
-  border: 1px solid var(--fluent-stroke);
-  border-radius: var(--fluent-radius-lg);
-  box-shadow: var(--fluent-shadow-16);
-  color: var(--fluent-text);
+.xb-theme-fluent2 .n-base-select-option--selected,
+.xb-theme-fluent2 .n-base-select-option:hover,
+.xb-theme-fluent2 .n-dropdown-option:hover,
+.xb-theme-fluent2 .n-dropdown-option--selected {
+  background: var(--fl-primary-soft) !important;
+  color: var(--fl-primary) !important;
 }
 
-/* ---------- 13. 滚动条（Fluent 风格） ---------- */
+/* ---------- 13. 滚动条 ---------- */
 .xb-theme-fluent2 ::-webkit-scrollbar { width: 10px; height: 10px; }
 .xb-theme-fluent2 ::-webkit-scrollbar-track { background: transparent; }
 .xb-theme-fluent2 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.22);
-  border: 3px solid transparent;
-  background-clip: content-box;
-  border-radius: 999px;
+  background: rgba(0,0,0,.22); border: 3px solid transparent; background-clip: content-box; border-radius: 999px;
 }
-.xb-theme-fluent2 ::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.40); background-clip: content-box; }
+.xb-theme-fluent2 ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,.40); background-clip: content-box; }
 
-/* ---------- 14. 选区 / 链接 ---------- */
-.xb-theme-fluent2 ::selection { background: var(--fluent-primary); color: #fff; }
-.xb-theme-fluent2 a { color: var(--fluent-primary); transition: color 150ms var(--fluent-ease); }
-.xb-theme-fluent2 a:hover { color: var(--fluent-primary-hover); }
-
-/* ---------- 15. 文本可读性兜底 ---------- */
-.xb-theme-fluent2 .ant-card,
-.xb-theme-fluent2 .ant-modal-content,
-.xb-theme-fluent2 .ant-table-thead > tr > th,
-.xb-theme-fluent2 h1, .xb-theme-fluent2 h2, .xb-theme-fluent2 h3,
-.xb-theme-fluent2 h4, .xb-theme-fluent2 h5 {
-  color: var(--fluent-text);
-}
-.xb-theme-fluent2 .ant-form-item-label label { color: var(--fluent-text-2); }
+/* ---------- 14. 选区 / 链接 / 文本兜底 ---------- */
+.xb-theme-fluent2 ::selection { background: var(--fl-primary); color: #fff; }
+.xb-theme-fluent2 a { color: var(--fl-primary); }
+.xb-theme-fluent2 a:hover { color: var(--fl-primary-hover); }
+.xb-theme-fluent2 h1,.xb-theme-fluent2 h2,.xb-theme-fluent2 h3,.xb-theme-fluent2 h4,.xb-theme-fluent2 h5 { color: var(--fl-text); }
 
 /* =============================================================
-   深色侧栏模式（当 theme_sidebar = dark 时由 JS 叠加 class）
+   深色侧栏（theme_color=black/darkblue 时由 custom.js 叠加 .xb-fl-dark）
    ============================================================= */
-.xb-theme-fluent2.xb-sidebar-dark .ant-layout-sider { background: rgba(32, 32, 32, 0.78) !important; }
-.xb-theme-fluent2.xb-sidebar-dark .ant-layout-sider .ant-menu-item,
-.xb-theme-fluent2.xb-sidebar-dark .ant-layout-sider .ant-menu-submenu-title,
-.xb-theme-fluent2.xb-sidebar-dark .ant-layout-sider .logo,
-.xb-theme-fluent2.xb-sidebar-dark .ant-layout-sider .anticon { color: rgba(255,255,255,.85) !important; }
-.xb-theme-fluent2.xb-sidebar-dark .ant-layout-sider .ant-menu-item:hover,
-.xb-theme-fluent2.xb-sidebar-dark .ant-layout-sider .ant-menu-submenu-title:hover { background: rgba(255,255,255,.08) !important; color:#fff !important; }
-.xb-theme-fluent2.xb-sidebar-dark .ant-layout-sider .ant-menu-item-selected { background: rgba(0,120,212,.30) !important; color:#fff !important; }
+.xb-theme-fluent2.xb-fl-dark .n-layout-sider { background: rgba(32,32,32,.80) !important; }
+.xb-theme-fluent2.xb-fl-dark .n-layout-sider * { color: rgba(255,255,255,.85) !important; }
+.xb-theme-fluent2.xb-fl-dark .n-menu-item-content:hover { background: rgba(255,255,255,.08) !important; color:#fff !important; }
+.xb-theme-fluent2.xb-fl-dark .n-menu-item-content--selected { background: rgba(0,120,212,.30) !important; color:#fff !important; }
 
-/* =============================================================
-   响应式：移动端收紧间距
-   ============================================================= */
 @media (max-width: 768px) {
-  .xb-theme-fluent2 .ant-card { border-radius: var(--fluent-radius); }
-  .xb-theme-fluent2 .ant-btn { height: 34px; }
+  .xb-theme-fluent2 .n-card { border-radius: var(--fl-radius) !important; }
+  .xb-theme-fluent2 .n-button { height: 34px !important; }
 }
