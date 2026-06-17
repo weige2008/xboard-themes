@@ -1,0 +1,55 @@
+{
+  "name": "Fluent2",
+  "description": "Fluent 2 / Windows 11 风格主题 — Mica 背景 + 亚克力玻璃卡片 + Fluent 蓝",
+  "version": "1.0.0",
+  "images": "",
+  "configs": [
+    {
+      "label": "主题色",
+      "placeholder": "请选择主题颜色",
+      "field_name": "theme_color",
+      "field_type": "select",
+      "select_options": {
+        "default": "Fluent 蓝(推荐)",
+        "darkblue": "深蓝",
+        "black": "石墨黑",
+        "green": "翡翠绿"
+      },
+      "default_value": "default"
+    },
+    {
+      "label": "背景",
+      "placeholder": "请输入背景图片URL（留空使用 Mica 渐变背景）",
+      "field_name": "background_url",
+      "field_type": "input"
+    },
+    {
+      "label": "侧栏风格",
+      "placeholder": "请选择边栏风格",
+      "field_name": "theme_sidebar",
+      "field_type": "select",
+      "select_options": {
+        "light": "亮(亚克力)",
+        "dark": "暗(云母黑)"
+      },
+      "default_value": "light"
+    },
+    {
+      "label": "顶部风格",
+      "placeholder": "请选择顶部风格",
+      "field_name": "theme_header",
+      "field_type": "select",
+      "select_options": {
+        "light": "亮(亚克力)",
+        "dark": "暗"
+      },
+      "default_value": "light"
+    },
+    {
+      "label": "自定义页脚HTML",
+      "placeholder": "可以实现客服JS代码的加入等",
+      "field_name": "custom_html",
+      "field_type": "textarea"
+    }
+  ]
+}
