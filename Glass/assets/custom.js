@@ -14,7 +14,14 @@
   body.classList.add('xb-theme-glass');
 
   var color = String(theme.color || 'dark').toLowerCase();
-  if (color === 'light') body.classList.add('xb-glass-light');
+  var isLight = (color === 'light');
+  if (isLight) {
+    body.classList.add('xb-glass-light');
+  } else {
+    // 关键: 启用 app 的 Tailwind dark 变体(内容区 section 会从 #f5f6fb 切到 #101014)
+    // 否则 app 自带的浅色 utility 背景会透出,白字不可见
+    document.documentElement.classList.add('dark');
+  }
 
   function injectBg() {
     if (document.getElementById('glass-bg')) return;
