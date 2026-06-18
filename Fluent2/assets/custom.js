@@ -8,6 +8,8 @@
    ============================================================= */
 (function () {
   'use strict';
+  // 确保处于 light 模式(若用户此前用过 Glass 主题,localStorage 可能是 dark)
+  try { localStorage.setItem('vueuse-color-scheme', 'light'); } catch (e) {}
   var s = (window.settings = window.settings || {});
   var theme = (s.theme = s.theme || {});
   var body = document.body;
