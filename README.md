@@ -74,6 +74,9 @@ storage/theme/Glass/{config.json, dashboard.blade.php, assets/...}
 
 ## 🧩 工作原理
 
+> **v1.2 架构（关键）**：两套主题都不再与 NaiveUI 的浅色底"硬抗"，而是驱动面板自带的主题系统。`custom.js` 作为经典脚本放在 `umi.js`（module，延迟执行）之前运行，在 app 启动前写入 `localStorage['vueuse-color-scheme']`：**Glass 写 `dark`** → 面板原生启用 NaiveUI `darkTheme` + Tailwind `dark` 变体，整站原生深色；**Fluent2 写 `light`** → 锁定浅色。随后 `custom.css` 只做"材质增强"（玻璃/亚克力/霓虹），因此更稳定、更美观，也不会再出现白底白字。
+> ⚠️ 因为使用了 `localStorage` 持久化，若你从 Glass 切回面板自带的 `Xboard` 主题，它可能仍继承深色；在 Xboard 主题里手动切回浅色即可（或重新上传/启用 Fluent2 会自动重置为浅色）。
+
 cedar2025/Xboard 的主题存放在两处：
 
 - **系统主题**：`theme/`（镜像内置，如 `Xboard`，不可删除）
